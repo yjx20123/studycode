@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/GUI编程/GUI编程.iml" filepath="$PROJECT_DIR$/GUI编程/GUI编程.iml" />
       <module fileurl="file://$PROJECT_DIR$/IP/IP.iml" filepath="$PROJECT_DIR$/IP/IP.iml" />
+      <module fileurl="file://$PROJECT_DIR$/注解与反射/注解与反射.iml" filepath="$PROJECT_DIR$/注解与反射/注解与反射.iml" />
       <module fileurl="file://$PROJECT_DIR$/流程控制/流程控制.iml" filepath="$PROJECT_DIR$/流程控制/流程控制.iml" />
     </modules>
   </component>
