@@ -20,7 +20,8 @@ public class demo01 {
         for(int i=0;i<5;i++){
             System.out.print(numbers[i]+"\t");
         }
-        System.out.println("==============================");
+
+        System.out.println("\n==============================");
         for(int x:numbers){
             System.out.print(x+"\t");
         }

@@ -6,7 +6,7 @@ package com.syn;
 public class UnsafeBank {
     public static void main(String[] args) {
         Account account = new Account(1000, "结婚基金");
-        Drawing you = new Drawing(account, 50, "ni");
+        Drawing you = new Drawing(account, 500, "ni");
         Drawing girl = new Drawing(account, 100, "girl");
         you.start();
         girl.start();
