@@ -14,6 +14,7 @@ public class Demo2 {
          * 2、io 密集型 判断你程序中十分耗IO的线程
          * 程序 15个大型任务，IO十分占用资源
          */
+
         //获取cpu的核数
         System.out.println(Runtime.getRuntime().availableProcessors());
         ExecutorService threadPool = new ThreadPoolExecutor(2,
