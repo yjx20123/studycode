@@ -1,0 +1,6 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="javaweb-02-maven">
+    <output-path>$PROJECT_DIR$/out/artifacts/javaweb_02_maven</output-path>
+    <root id="archive" name="javaweb-02-maven.war" />
+  </artifact>
+</component>
