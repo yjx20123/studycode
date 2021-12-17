@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class BookController {
 
     @Autowired
-    @Qualifier('BookserviceImpl')
+    @Qualifier('BookServiceImpl')
     private BookService bookService;
+
 }
