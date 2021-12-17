@@ -1,12 +1,14 @@
 package com.yang.blog.pojo;
 
-import java.io.Serializable;
+import lombok.Data;
 
+import java.io.Serializable;
+@Data
 public class User implements Serializable {
     private String name;
     private int age;
     private String gender;
-
+    private House house;
     public User() {
     }
 
