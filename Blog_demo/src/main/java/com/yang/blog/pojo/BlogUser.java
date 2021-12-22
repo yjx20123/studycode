@@ -1,16 +1,22 @@
 package com.yang.blog.pojo;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serializable;
 import java.util.Date;
-
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "tb_user")
-public class BlogUser {
+public class BlogUser implements Serializable,Cloneable {
     @Id
-    @Column(name = "id")
     private String id;
     @Column(name = "user_name")
     private String user_name;
