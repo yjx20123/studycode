@@ -56,5 +56,9 @@ public class ResponseResult {
     }
     public static ResponseResult FAILED(){
         return new ResponseResult(ResonseState.FAILED);
+    }public static ResponseResult FAILED(String message){
+        ResponseResult responseResult = new ResponseResult(ResonseState.FAILED);
+        responseResult.setMessage(message);
+        return responseResult;
     }
 }

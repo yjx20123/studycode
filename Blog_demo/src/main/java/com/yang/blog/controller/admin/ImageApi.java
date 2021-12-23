@@ -8,19 +8,27 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/admin/image")
 public class ImageApi {
     @PostMapping
-    public ResponseResult uploadImage(){
+    public ResponseResult uploadImage() {
         return ResponseResult.SUCCESS();
-    }@DeleteMapping("{imageId}")
-    public ResponseResult deleteImage(@PathVariable("imageId") String iamgeId){
+    }
+
+    @DeleteMapping("{imageId}")
+    public ResponseResult deleteImage(@PathVariable("imageId") String iamgeId) {
         return ResponseResult.SUCCESS();
-    }@PutMapping("{imageId}")
-    public ResponseResult updateImage(@PathVariable("imageId") String iamgeId){
+    }
+
+    @PutMapping("{imageId}")
+    public ResponseResult updateImage(@PathVariable("imageId") String iamgeId) {
         return ResponseResult.SUCCESS();
-    }@GetMapping("imageId")
-    public ResponseResult getImage(@PathVariable("imageId") String iamgeId){
+    }
+
+    @GetMapping("imageId")
+    public ResponseResult getImage(@PathVariable("imageId") String iamgeId) {
         return ResponseResult.SUCCESS();
-    }@PostMapping
-    public ResponseResult Image(){
+    }
+
+    @GetMapping("/list")
+    public ResponseResult Image(@RequestParam("page")int page,@RequestParam("size") int size) {
         return ResponseResult.SUCCESS();
     }
 }

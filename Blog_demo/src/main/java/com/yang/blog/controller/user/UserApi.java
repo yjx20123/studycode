@@ -2,25 +2,31 @@ package com.yang.blog.controller.user;
 
 import com.yang.blog.pojo.BlogUser;
 import com.yang.blog.response.ResponseResult;
+import com.yang.blog.service.IUserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/user")
 @Slf4j
 public class UserApi {
+    @Autowired
+    private IUserService UserService;
     /**
      * 初始化管理员账号
      *
      * @return
      */
     @PostMapping("/admin_accout")
-    public ResponseResult initManagerAccount(@RequestBody BlogUser blogUser) {
-        log.info("user name ====>" + blogUser.getUser_name());
+    public ResponseResult initManagerAccount(@RequestBody BlogUser blogUser, HttpServletRequest request) {
+        log.info("user name ====>" + blogUser.getUsername());
         log.info("password ====>" + blogUser.getPassword());
         log.info("Email ====>" + blogUser.getEmail());
-        return ResponseResult.SUCCESS();
+        return UserService.initManageAccount(blogUser,request);
     }
 
     /**

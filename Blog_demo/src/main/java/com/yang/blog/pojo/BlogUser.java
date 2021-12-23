@@ -19,7 +19,7 @@ public class BlogUser implements Serializable,Cloneable {
     @Id
     private String id;
     @Column(name = "user_name")
-    private String user_name;
+    private String username;
     @Column(name="password")
     private String password;
     @Column(name = "roles")
@@ -35,10 +35,10 @@ public class BlogUser implements Serializable,Cloneable {
     @Column(name = "reg_ip")
     private String reg_ip;
     @Column(name = "log_ip")
-    private String log_ip;
+    private String logip;
     @Column(name="create_time")
-    private Date create_time;
+    private Date createtime;
     @Column(name = "update_time")
-    private Date update_time;
+    private Date updatetime;
 
 }
