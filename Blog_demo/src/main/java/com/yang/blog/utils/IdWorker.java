@@ -62,7 +62,6 @@ public class IdWorker {
         this.workerId = workerId;
         this.datacenterId = datacenterId;
     }
-
     // ==============================Methods==========================================
     /**
      * 获得下一个ID (该方法是线程安全的)

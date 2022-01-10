@@ -1,0 +1,6 @@
+spring:
+  datasource:
+    username: guider
+    password: guider
+    url: jdbc:mysql://49.232.159.4:3306/guider?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8
+    driver-class-name: com.mysql.cj.jdbc.Driver
