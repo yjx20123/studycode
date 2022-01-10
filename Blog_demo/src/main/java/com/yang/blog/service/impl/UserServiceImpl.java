@@ -1,5 +1,6 @@
 package com.yang.blog.service.impl;
 
+import com.yang.blog.dao.UserDao;
 import com.yang.blog.pojo.BlogUser;
 import com.yang.blog.response.ResponseResult;
 import com.yang.blog.service.IUserService;
@@ -8,6 +9,7 @@ import com.yang.blog.utils.IdWorker;
 import com.yang.blog.utils.TextUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
@@ -32,7 +34,7 @@ public class UserServiceImpl implements IUserService {
        blogUser.setRoles(Constants.User.ROLE_ADMIN);
        blogUser.setAvatar(Constants.User.DEFAULT_AVATAR);
        blogUser.setState(Constants.User.DEFAULT_STATE);
-
         return ResponseResult.SUCCESS("登录成功");
+
     }
 }

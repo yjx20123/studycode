@@ -1,0 +1,14 @@
+person:
+  name: yjx@qq.com
+  age: 3
+  happy: true
+  birth: 2021/01/23
+  maps: {k1: v1,k2: v2}
+  list:
+    -code
+    -music
+    -girl
+  dog:
+    name: 旺财
+    age: 3
+debug: true

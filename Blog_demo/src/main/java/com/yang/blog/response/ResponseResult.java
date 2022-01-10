@@ -42,21 +42,28 @@ public class ResponseResult {
     public void setData(Object data) {
         this.data = data;
     }
-    public ResponseResult(ResonseState resonseState){
-        this.success=resonseState.isSuccess();
-        this.code=resonseState.getCode();
-        this.message=resonseState.getMessage();
+
+    public ResponseResult(ResonseState resonseState) {
+        this.success = resonseState.isSuccess();
+        this.code = resonseState.getCode();
+        this.message = resonseState.getMessage();
     }
-    public static  ResponseResult SUCCESS(){
+
+    public static ResponseResult SUCCESS() {
         return new ResponseResult(ResonseState.SUCCESS);
-    } public static  ResponseResult SUCCESS(String message){
+    }
+
+    public static ResponseResult SUCCESS(String message) {
         ResponseResult responseResult = new ResponseResult(ResonseState.SUCCESS);
         responseResult.setMessage(message);
         return responseResult;
     }
-    public static ResponseResult FAILED(){
+
+    public static ResponseResult FAILED() {
         return new ResponseResult(ResonseState.FAILED);
-    }public static ResponseResult FAILED(String message){
+    }
+
+    public static ResponseResult FAILED(String message) {
         ResponseResult responseResult = new ResponseResult(ResonseState.FAILED);
         responseResult.setMessage(message);
         return responseResult;
