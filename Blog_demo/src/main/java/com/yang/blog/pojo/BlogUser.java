@@ -34,7 +34,7 @@ public class BlogUser implements Serializable,Cloneable {
     private String state;
     @Column(name = "reg_ip")
     private String reg_ip;
-    @Column(name = "log_ip")
+    @Column(name = "login_ip")
     private String logip;
     @Column(name="create_time")
     private Date createtime;
