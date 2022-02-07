@@ -1,4 +1,13 @@
 package com.yang.blog.dao;
 
-public class UserDao{
+import com.yang.blog.pojo.BlogUser;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+
+
+
+public interface UserDao extends JpaSpecificationExecutor<BlogUser>, JpaRepository<BlogUser, String> {
+
 }
+
+

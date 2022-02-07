@@ -4,15 +4,15 @@
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
     <properties resource="dataSource.properties">
-
+         <property name="username" value="mybatis"/>
     </properties>
     <environments default="development">
         <environment id="development">
             <transactionManager type="JDBC"/>
             <dataSource type="POOLED">
                 <property name="driver" value="${propertiesDriver}"/>
-                <property name="url" value="jdbc:mysql://49.232.159.4:3306/mybatis?useSSL=false&amp;useUnicode=true&amp;characterEncoding=utf8&amp;serverTimezone=CST"/>
-                <property name="username" value="mybatis"/>
+                <property name="url" value="${propertiesUrl}"/>
+                <property name="username" value="${username}"/>
                 <property name="password" value="root"/>
             </dataSource>
         </environment>

@@ -8,7 +8,7 @@ import java.util.Date;
 import javax.persistence.Entity;
 
 @Entity
-@Table(name="tb_category")
+@Table(name="tb_categories")
 public class Category implements Serializable,Cloneable{
     /** ID */
     @Id

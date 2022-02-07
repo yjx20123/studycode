@@ -3,6 +3,7 @@ package com.yang.blog.controller.user;
 import com.yang.blog.pojo.BlogUser;
 import com.yang.blog.response.ResponseResult;
 import com.yang.blog.service.IUserService;
+import com.yang.blog.service.impl.UserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 public class UserApi {
     @Autowired
-    private IUserService UserService;
+    private IUserService userService;
     /**
      * 初始化管理员账号
      *
@@ -23,10 +24,7 @@ public class UserApi {
      */
     @PostMapping("/admin_accout")
     public ResponseResult initManagerAccount(@RequestBody BlogUser blogUser, HttpServletRequest request) {
-        log.info("user name ====>" + blogUser.getUsername());
-        log.info("password ====>" + blogUser.getPassword());
-        log.info("Email ====>" + blogUser.getEmail());
-        return UserService.initManageAccount(blogUser,request);
+        return userService.initManagerAccount(blogUser,request);
     }
 
     /**

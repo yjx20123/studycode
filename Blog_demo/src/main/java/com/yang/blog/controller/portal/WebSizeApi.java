@@ -1,13 +1,13 @@
 package com.yang.blog.controller.portal;
 
 import com.yang.blog.response.ResponseResult;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 @RestController
-@RequestMapping("/portal/web_size_info")
-public class WebSizeInfoApi {
+@RequestMapping("/portal/web")
+public class WebSizeApi {
     @GetMapping("/categories")
     public ResponseResult getCategories(){
         return null;
