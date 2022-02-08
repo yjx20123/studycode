@@ -8,6 +8,10 @@ spring:
     password: blog
   jpa:
     show-sql: true
+  redis:
+    host: 49.232.159.4
+    port: 6379
+    password: root
 server:
   port: 8080
 

@@ -3,13 +3,22 @@ package com.yang.blog.response;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
-@NoArgsConstructor
+
 public class ResponseResult {
     private boolean success;
     private int code;
     private String message;
     private Object data;
+
+    public ResponseResult(boolean success, int code, String message, Object data) {
+        this.success = success;
+        this.code = code;
+        this.message = message;
+        this.data = data;
+    }
+
+    public ResponseResult() {
+    }
 
     public boolean isSuccess() {
         return success;
@@ -39,8 +48,10 @@ public class ResponseResult {
         return data;
     }
 
-    public void setData(Object data) {
+
+    public Object setData(Object data) {
         this.data = data;
+        return data;
     }
 
     public ResponseResult(ResonseState resonseState) {

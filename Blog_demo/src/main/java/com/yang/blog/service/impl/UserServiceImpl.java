@@ -14,6 +14,7 @@ import com.yang.blog.utils.TextUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
@@ -26,11 +27,13 @@ import java.util.Date;
 @Transactional
 public class UserServiceImpl implements IUserService {
     @Autowired
-    public IdWorker idWorker;
+    private IdWorker idWorker;
     @Autowired
-    public SettingsDao settingsDao;
+    private SettingsDao settingsDao;
     @Autowired
-    public UserDao userDao;
+    private UserDao userDao;
+    @Autowired
+    private BCryptPasswordEncoder cryptPasswordEncoder;
     @Override
     public ResponseResult initManagerAccount(BlogUser blogUser, HttpServletRequest request) {
         //检查是否有初始化
@@ -56,7 +59,10 @@ public class UserServiceImpl implements IUserService {
         blogUser.setReg_ip(remoteAddr);
         blogUser.setCreatetime(new Date());
         blogUser.setUpdatetime(new Date());
+        String password = blogUser.getPassword();
 
+        String encode = cryptPasswordEncoder.encode(password);
+        blogUser.setPassword(encode);
         userDao.save(blogUser);
         //更新已经添加的标记
         Setting setting=new Setting();
