@@ -32,6 +32,16 @@ public class UserApi {
      */
     @PostMapping
     public ResponseResult register(@RequestBody BlogUser blogUser) {
+        //第一步：检查当前用户名是否已经注册
+        //第二步：检查邮箱格式是否正确
+        //第三步：检查该邮箱是否已经注册
+        //第四部：检查邮箱验证码正确
+        //第五步： 检查图灵验证码是否正确
+        //达到可以注册的条件
+        //第六步：对密码进行加密
+        //第七步：补全数据
+        //第八步：保存到数据库
+        //
         return ResponseResult.SUCCESS();
     }
 
