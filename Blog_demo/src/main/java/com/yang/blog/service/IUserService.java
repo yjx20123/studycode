@@ -13,4 +13,6 @@ public interface IUserService {
     ResponseResult initManagerAccount(BlogUser blogUser, HttpServletRequest request);
 
     void createCaptcha(HttpServletResponse response, String captchakey) throws Exception;
+
+    ResponseResult sendEmail(HttpServletRequest request, String emailAddress);
 }

@@ -132,11 +132,36 @@ public class UserServiceImpl implements IUserService {
 
         int index = createRandom.nextInt(captcha_Font_types.length);
         log.info("captcha_Font_types.length index ==>" + index);
-//        captcha.setFont(captcha_Font_types[index]);
+        captcha.setFont(captcha_Font_types[index]);
         String content = captcha.text().toLowerCase();
         //保存到redis中
         redisUtil.set(Constants.User.KEY_CAPTCHA_CONTENT + key, content, 10*60);
         // 输出图片流
         captcha.out(response.getOutputStream());
+    }
+
+    /**
+     * 发送邮件
+     * @param request
+     * @param emailAddress
+     * @return
+     */
+    @Override
+    public ResponseResult sendEmail(HttpServletRequest request, String emailAddress) {
+        //防止暴力发送
+        String remoteAddr = request.getRemoteAddr();
+        log.info("email==>ip"+remoteAddr);
+        if(remoteAddr!=null){
+            remoteAddr=remoteAddr.replaceAll(":","_");
+        }
+        log.info("constants.user.key_email_send_ip ==>"+Constants.User.KEY_EMAIL_SEND_IP+remoteAddr);
+        Integer ipSendTime = (Integer) redisUtil.get(Constants.User.KEY_EMAIL_SEND_IP + remoteAddr);
+        if(ipSendTime!=null&&ipSendTime>10){
+            return ResponseResult.FAILED("你发送验证码也太频繁了吧!!!");
+        }
+        redisUtil.get(Constants.User.KEY_EMAIL_SEND_ADDRESS+remoteAddr);
+        //检查邮箱地址是否正确
+        //发送验证码
+        return null;
     }
 }

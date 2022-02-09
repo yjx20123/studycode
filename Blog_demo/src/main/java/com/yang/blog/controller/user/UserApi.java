@@ -65,10 +65,6 @@ public class UserApi {
      *
      * @return
      */
-
-    @Autowired
-    private RedisUtil redisUtil;
-
     @PostMapping("/{captcha}")
     public void login(HttpServletResponse response, @RequestParam("captcha_key") String captchakey) throws Exception {
 
@@ -96,9 +92,9 @@ public class UserApi {
      * @return
      */
     @GetMapping("/verify_code")
-    public ResponseResult senVerifyCode(@RequestParam("email") String emailAddress) {
+    public ResponseResult senVerifyCode(@RequestParam("email") String emailAddress,HttpServletRequest request) {
         log.info("email====>" + emailAddress);
-        return ResponseResult.SUCCESS();
+        return userService.sendEmail(request,emailAddress);
     }
 
     /**

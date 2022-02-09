@@ -305,6 +305,9 @@ public class EmailSender {
         bodyPart.setContent(html, "text/html; charset=utf-8");
         return bodyPart;
     }
-
+    public static  void SenRegisterVerifyCode(String code,String emailAddress) throws Exception {
+        EmailSender.subject("邮件发送").from("阳光沙滩博客系统")
+                .text("这是发送的内容："+code).to(emailAddress).send();
+    }
 
 }
