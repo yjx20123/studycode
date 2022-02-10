@@ -1,6 +1,7 @@
 package com.yang.blog.utils;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
@@ -12,6 +13,7 @@ import java.net.URL;
 import java.util.*;
 
 @Slf4j
+
 public class EmailSender {
 
 
@@ -306,8 +308,8 @@ public class EmailSender {
         return bodyPart;
     }
     public static  void SenRegisterVerifyCode(String code,String emailAddress) throws Exception {
-        EmailSender.subject("邮件发送").from("阳光沙滩博客系统")
-                .text("这是发送的内容："+code).to(emailAddress).send();
+        EmailSender.subject("邮件发送测试").from("杨家兴")
+                .text("这是您的验证码:"+code+",请妥善保管,请勿告知他人").to(emailAddress).send();
     }
 
 }
