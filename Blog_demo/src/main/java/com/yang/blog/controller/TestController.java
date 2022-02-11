@@ -160,5 +160,6 @@ public class TestController {
         // 输出图片流
         specCaptcha.out(response.getOutputStream());
     }
+
 }
 

@@ -14,6 +14,7 @@ import com.yang.blog.utils.RedisUtil;
 import com.yang.blog.utils.TextUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,12 +55,21 @@ public class UserApi {
 
     /**
      * 登录功能
-     *
-     * @return
+     *用户账号可以是昵称 也可以是邮箱 做了唯一处理
+     * 2、密码
+     * 3图灵验证码
+     * 4，图灵验证码的key
+     * @param captcha 图灵验证码
+     * @param captcha_key captcha_key
+     * @param
      */
-    @PostMapping("/{captcha}")
-    public void login(HttpServletResponse response, @RequestParam("captcha_key") String captchakey) throws Exception {
+    @PostMapping("/{captcha}/{captcha_key}")
+    public ResponseResult login(@RequestBody BlogUser blogUser,@PathVariable("captcha") String captcha,
+                                @PathVariable("captcha_key") String captcha_key,
 
+                                HttpServletResponse response,
+                                HttpServletRequest request) throws Exception {
+        return userService.doLogin(captcha,captcha_key,blogUser,response,request);
     }
 
     /**

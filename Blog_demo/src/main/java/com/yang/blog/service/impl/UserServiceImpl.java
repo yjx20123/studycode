@@ -20,12 +20,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
-import java.awt.*;
-import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 @Slf4j
@@ -272,5 +273,66 @@ public class UserServiceImpl implements IUserService {
         //第八步：保存到数据库
         userDao.save(blogUser);
         return ResponseResult.SUCCESS("注册成功");
+    }
+    @Autowired
+    private JwtUtil jwtUtil;
+    @Override
+    public ResponseResult doLogin(String captcha,
+                                  String captcha_key,
+                                  BlogUser blogUser,
+                                  HttpServletResponse response,
+                                  HttpServletRequest request) {
+        Object captchaKey = redisUtil.get(Constants.User.KEY_CAPTCHA_CONTENT + captcha_key);
+        if (!captcha.equals(captchaKey)){
+            return ResponseResult.FAILED("验证码不正确");
+        }
+        String username = blogUser.getUsername();
+        if(TextUtils.isEmmpty(username)){
+            return ResponseResult.FAILED("账号不可为空");
+        }
+        String password = blogUser.getPassword();
+        if(TextUtils.isEmmpty(password)){
+            return ResponseResult.FAILED("密码不可为空");
+        }
+        BlogUser byUsername = userDao.findByUsername(username);
+        if (byUsername == null) {
+
+            byUsername= userDao.findByEmail(username);
+        }
+        if(byUsername==null){
+            return ResponseResult.FAILED("用户名或者密码错误");
+        }
+        //用户存在
+        // 对比密码
+        boolean matches = cryptPasswordEncoder.matches(password, byUsername.getPassword());
+        if(!matches){
+            return ResponseResult.FAILED("用户名或者密码错误");
+        }
+        //判断用户状态
+        if(!"1".equals(byUsername.getState())){
+            return ResponseResult.FAILED("当前账号已被禁用");
+        }
+        //生成token
+        Map<String,Object> claims=new HashMap<>();
+        claims.put("id",byUsername.getId());
+        claims.put("username",byUsername.getUsername());
+        claims.put("roles",byUsername.getPassword());
+        claims.put("avatar",byUsername.getAvatar());
+        claims.put("email",byUsername.getEmail());
+        //token有效时间为两小时
+        String token = JwtUtil.createToken(claims);
+        //返回token的md5值,token会保存到redis里
+        //前端访问的时候，携带token的md5key,从redis中获取即可
+        String tokenKey = DigestUtils.md5DigestAsHex(token.getBytes());
+        redisUtil.set(Constants.User.key_TOKEN_+tokenKey,token,60*60*2);
+        //把tokenKey 写到cookie里
+        Cookie cookie = new Cookie("sob_blog_token", tokenKey);
+        //这个要动态获取,可以从request里获取
+        cookie.setDomain("localhost");
+        cookie.setMaxAge(60*60*24*365);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+
+        return ResponseResult.SUCCESS("登录成功");
     }
 }
