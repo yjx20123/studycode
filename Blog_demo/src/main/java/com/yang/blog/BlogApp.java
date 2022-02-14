@@ -1,5 +1,6 @@
 package com.yang.blog;
 
+import com.google.gson.Gson;
 import com.yang.blog.utils.IdWorker;
 import com.yang.blog.utils.JwtUtil;
 import com.yang.blog.utils.RedisUtil;
@@ -43,5 +44,10 @@ public class BlogApp {
     @Bean
     public JwtUtil jwtUtil() {
         return new JwtUtil();
+    }
+
+    @Bean
+    public Gson createGson() {
+        return new Gson();
     }
 }

@@ -16,4 +16,13 @@ public interface IUserService {
     ResponseResult registerUser(BlogUser blogUser, String code, String captchaCode,String captchaKey,HttpServletRequest request);
 
     ResponseResult doLogin(String captcha, String captcha_key, BlogUser blogUser, HttpServletResponse response, HttpServletRequest request);
+    BlogUser checkBlogUser(HttpServletRequest request,HttpServletResponse response);
+
+    ResponseResult getUserInfo(String userid);
+
+    ResponseResult checkEmail(String email);
+
+    ResponseResult checkUsername(String username);
+
+    ResponseResult updateUserInfo(HttpServletRequest request, HttpServletResponse response, String userId, BlogUser blogUser);
 }

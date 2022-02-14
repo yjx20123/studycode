@@ -12,6 +12,8 @@ import com.yang.blog.service.impl.UserServiceImpl;
 import com.yang.blog.utils.Constants;
 import com.yang.blog.utils.RedisUtil;
 import com.yang.blog.utils.TextUtils;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
@@ -47,29 +49,29 @@ public class UserApi {
      * 注册
      */
     @PostMapping
-    public ResponseResult register(@RequestBody BlogUser blogUser,@RequestParam("email_code") String code,@RequestParam("captcha_code") String captchaCode
-    ,@RequestParam("captcha_key") String captchaKey
-    ,HttpServletRequest request) {
-        return userService.registerUser(blogUser,code,captchaCode,captchaKey,request);
+    public ResponseResult register(@RequestBody BlogUser blogUser, @RequestParam("email_code") String code, @RequestParam("captcha_code") String captchaCode
+            , @RequestParam("captcha_key") String captchaKey
+            , HttpServletRequest request) {
+        return userService.registerUser(blogUser, code, captchaCode, captchaKey, request);
     }
 
     /**
      * 登录功能
-     *用户账号可以是昵称 也可以是邮箱 做了唯一处理
+     * 用户账号可以是昵称 也可以是邮箱 做了唯一处理
      * 2、密码
      * 3图灵验证码
      * 4，图灵验证码的key
-     * @param captcha 图灵验证码
+     *
+     * @param captcha     图灵验证码
      * @param captcha_key captcha_key
      * @param
      */
     @PostMapping("/{captcha}/{captcha_key}")
-    public ResponseResult login(@RequestBody BlogUser blogUser,@PathVariable("captcha") String captcha,
+    public ResponseResult login(@RequestBody BlogUser blogUser, @PathVariable("captcha") String captcha,
                                 @PathVariable("captcha_key") String captcha_key,
-
                                 HttpServletResponse response,
                                 HttpServletRequest request) throws Exception {
-        return userService.doLogin(captcha,captcha_key,blogUser,response,request);
+        return userService.doLogin(captcha, captcha_key, blogUser, response, request);
     }
 
     /**
@@ -80,7 +82,7 @@ public class UserApi {
     @GetMapping("/captcha")
     public void getCaptcha(HttpServletResponse response, @RequestParam("captcha_key") String captchakey) throws Exception {
         try {
-            userService.createCaptcha(response,captchakey);
+            userService.createCaptcha(response, captchakey);
         } catch (Exception e) {
             log.error(e.toString());
         }
@@ -94,9 +96,9 @@ public class UserApi {
      * @return
      */
     @GetMapping("/verify_code")
-    public ResponseResult senVerifyCode(@RequestParam("type") String type,@RequestParam("email") String emailAddress,HttpServletRequest request) {
+    public ResponseResult senVerifyCode(@RequestParam("type") String type, @RequestParam("email") String emailAddress, HttpServletRequest request) {
         log.info("email====>" + emailAddress);
-        return userService.sendEmail(request,type,emailAddress);
+        return userService.sendEmail(request, type, emailAddress);
     }
 
     /**
@@ -118,7 +120,7 @@ public class UserApi {
      */
     @GetMapping("{userid}")
     public ResponseResult getUserInfo(@PathVariable("userid") String userid) {
-        return null;
+        return userService.getUserInfo(userid);
     }
 
     /**
@@ -127,9 +129,9 @@ public class UserApi {
      * @return
      */
     @PutMapping("/{userId}")
-    public ResponseResult updateUserInfo(@PathVariable("userId") String userId, @RequestBody BlogUser blogUser) {
+    public ResponseResult updateUserInfo(HttpServletResponse response,HttpServletRequest request,@PathVariable("userId") String userId, @RequestBody BlogUser blogUser) {
 
-        return null;
+        return userService.updateUserInfo(request,response,userId,blogUser);
     }
 
     /**
@@ -153,6 +155,28 @@ public class UserApi {
     @DeleteMapping("/{userId}")
     public ResponseResult deleteUser(@PathVariable("userId") String userId) {
         return null;
+    }
+
+    @ApiResponses(
+            {
+                    @ApiResponse(code = 20000, message = "当前邮箱已经注册"),
+                    @ApiResponse(code = 40000, message = "当前邮箱未被注册")
+            }
+    )
+    @GetMapping("/email")
+    public ResponseResult checkEmail(@RequestParam("email") String email) {
+        return userService.checkEmail(email);
+    }
+
+    @ApiResponses(
+            {
+                    @ApiResponse(code = 20000, message = "当前邮箱已经注册"),
+                    @ApiResponse(code = 40000, message = "当前邮箱未被注册")
+            }
+    )
+    @GetMapping("/user_name")
+    public ResponseResult checkUsername(@RequestParam("username") String username) {
+        return userService.checkUsername(username);
     }
 }
 

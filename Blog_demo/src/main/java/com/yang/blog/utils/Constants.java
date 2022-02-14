@@ -3,7 +3,12 @@ package com.yang.blog.utils;
 public interface Constants {
     int DEFAULT_SIZE=30;
      interface TimeValue{
-          int HOUR_2=60*60*2*1000;
+          int HOUR_2=60*60*2;
+          int MIN=60;
+          int HOUR=60*MIN;
+          int Day=24*HOUR;
+          int WEEK=7*Day;
+          int MONTH=Day*30;
      }
     interface User{
         String ROLE_ADMIN="rolen_admin";
@@ -18,4 +23,6 @@ public interface Constants {
     interface Settings{
         String MANAGER_ACCOUNT_INIT_STATE="manager_account_init_state";
     }
+
+
 }
