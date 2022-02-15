@@ -41,4 +41,13 @@ public class BlogUser implements Serializable,Cloneable {
     @Column(name = "update_time")
     private Date updatetime;
 
+    public BlogUser(String id, String username, String roles, String avatar, String email, String state, Date createtime) {
+        this.id = id;
+        this.username = username;
+        this.roles = roles;
+        this.avatar = avatar;
+        this.email = email;
+        this.state = state;
+        this.createtime = createtime;
+    }
 }

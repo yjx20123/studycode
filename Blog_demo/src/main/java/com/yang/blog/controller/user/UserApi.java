@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -142,8 +143,8 @@ public class UserApi {
      * @return
      */
     @GetMapping("/list")
-    public ResponseResult listUsers(@RequestParam("page") int page, @RequestParam("size") int size) {
-        return null;
+    public ResponseResult listUsers(@RequestParam("page") int page, @RequestParam("size") int size,HttpServletRequest request,HttpServletResponse response) {
+        return userService.listUsers(page,size,request,response);
     }
 
     /**
@@ -152,11 +153,17 @@ public class UserApi {
      * @param userId
      * @return
      */
+    @PreAuthorize("@permission.admin()")
     @DeleteMapping("/{userId}")
-    public ResponseResult deleteUser(@PathVariable("userId") String userId) {
-        return null;
+    public ResponseResult deleteUser(@PathVariable("userId") String userId,HttpServletRequest request,HttpServletResponse response) {
+        return userService.deleteUser(userId,request,response);
     }
 
+    /**
+     * 检查邮箱是否被注册
+     * @param email
+     * @return
+     */
     @ApiResponses(
             {
                     @ApiResponse(code = 20000, message = "当前邮箱已经注册"),
@@ -168,6 +175,11 @@ public class UserApi {
         return userService.checkEmail(email);
     }
 
+    /**
+     * 检查用户名是否被注册
+     * @param username
+     * @return
+     */
     @ApiResponses(
             {
                     @ApiResponse(code = 20000, message = "当前邮箱已经注册"),

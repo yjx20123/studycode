@@ -25,4 +25,8 @@ public interface IUserService {
     ResponseResult checkUsername(String username);
 
     ResponseResult updateUserInfo(HttpServletRequest request, HttpServletResponse response, String userId, BlogUser blogUser);
+
+    ResponseResult deleteUser(String userId, HttpServletRequest request, HttpServletResponse response);
+
+    ResponseResult listUsers(int page, int size, HttpServletRequest request, HttpServletResponse response);
 }

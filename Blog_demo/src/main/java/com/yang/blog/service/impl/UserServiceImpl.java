@@ -20,11 +20,13 @@ import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
@@ -332,33 +334,42 @@ public class UserServiceImpl implements IUserService {
         return ResponseResult.SUCCESS("登录成功");
     }
 
-    private String createToken(HttpServletResponse response, BlogUser byUsername) {
-        refreshTokenDao.deleteAllByUserId(byUsername.getId());
+    /**
+     * @param response
+     * @param userFromDb
+     * @return token_key
+     */
+    private String createToken(HttpServletResponse response, BlogUser userFromDb) {
+        int deleteResult = refreshTokenDao.deleteAllByUserId(userFromDb.getId());
+        log.info("deleteResult of refresh token .. " + deleteResult);
         //生成token
-        Map<String, Object> claims = new HashMap<>();
-        ClaimsUtils.blogUserClaims(byUsername);
-        //token有效时间为两小时
+        Map<String, Object> claims = ClaimsUtils.blogUserClaims(userFromDb);
+        //token默认有效为2个小时
         String token = JwtUtil.createToken(claims);
-        //返回token的md5值,token会保存到redis里
-        //前端访问的时候，携带token的md5key,从redis中获取即可
+        //返回token的md5值，token会保存到redis里
+        //前端访问的时候，携带token的md5key，从redis中获取即可
         String tokenKey = DigestUtils.md5DigestAsHex(token.getBytes());
-        redisUtil.set(Constants.User.key_TOKEN_ + tokenKey, token, Constants.TimeValue.HOUR_2);
-        //这个要动态获取,可以从request里获取
-        CookieUtils.setUpCookie(response, Constants.User.key_TOKEN_, tokenKey);
-        //TODO:生成refreshToken
-        String refreshTokenValue = JwtUtil.createRefreshToken(byUsername.getId(), Constants.TimeValue.MONTH);
-        //TODO:保存到数据库中
-        //refreshToken, tokey
+        //保存token到redis里，有效期为2个小时，key是tokenKey
+        redisUtil.set(Constants.User.TOKEN_KEY + tokenKey, token, Constants.TimeValue.HOUR_2);
+        //把tokenKey写到cookies里
+        //这个要动态获取，可以从request里获取，
+        CookieUtils.setUpCookie(response, Constants.User.COOKIE_TOKEN_KEY, tokenKey);
+        //生成refreshToken
+        String refreshTokenValue = JwtUtil.createRefreshToken(userFromDb.getId(), Constants.TimeValue.MONTH);
+        log.info("refreshTokenValue==>" + refreshTokenValue);
+        //保存到数据库里
+        //refreshToken，tokenKey，用户ID，创建时间，更新时间
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setId(idWorker.nextId() + "");
         refreshToken.setRefreahToken(refreshTokenValue);
-        refreshToken.setUserId(byUsername.getId());
+        refreshToken.setUserId(userFromDb.getId());
         refreshToken.setTokenKey(tokenKey);
         refreshToken.setCreatetime(new Date());
         refreshToken.setUpdatetime(new Date());
         refreshTokenDao.save(refreshToken);
         return tokenKey;
     }
+
 
     /**
      * 本质检查用户是否有登录
@@ -369,7 +380,7 @@ public class UserServiceImpl implements IUserService {
      */
     @Override
     public BlogUser checkBlogUser(HttpServletRequest request, HttpServletResponse response) {
-        String tokenKey = CookieUtils.getCookie(request, Constants.User.key_TOKEN_);
+        String tokenKey = CookieUtils.getCookie(request, Constants.User.COOKIE_TOKEN_KEY);
         BlogUser blogUser = parseByTokenKey(tokenKey);
         if (blogUser == null) {
 
@@ -383,7 +394,8 @@ public class UserServiceImpl implements IUserService {
             }
             //如果存在，就解析reFreshToken
             try {
-                JwtUtil.parseJWT(refreshToken.getRefreahToken());
+
+//                JwtUtil.parseJWT(refreshToken.getRefreahToken());
                 //如果refreshToken有效，创建新的token和新的refreshToken
                 BlogUser userFromDb = userDao.findOneById(refreshToken.getUserId());
                 //删掉refreshToken的记录
@@ -393,6 +405,20 @@ public class UserServiceImpl implements IUserService {
             } catch (Exception e1) {
                 //如果refreshToken过期了,就当前访问没有登录,提示用户登录
             }
+        }
+        return blogUser;
+    }
+
+    private BlogUser parseByTokenKey(String tokenKey) {
+        String token = (String) redisUtil.get(Constants.User.TOKEN_KEY + tokenKey);
+        if (token != null) {
+            try {
+                Claims claims = JwtUtil.parseJWT(token);
+                return ClaimsUtils.claimBlogUser(claims);
+            } catch (Exception e) {
+                return null;
+            }
+
         }
         return null;
     }
@@ -428,12 +454,15 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public ResponseResult updateUserInfo(HttpServletRequest request, HttpServletResponse response, String userId, BlogUser blogUser) {
-        BlogUser userAccount = checkBlogUser(request, response);
-        if (userAccount == null) {
+
+        BlogUser userFromKey = checkBlogUser(request, response);
+
+        if (userFromKey == null) {
             ResponseResult.FAILED("账号未登录");
         }//判断用户的id是否一致，如果一致才可以修改
-        if (userAccount.getId().equals(userId)) {
-            return ResponseResult.FAILED("您无权修改此密码");
+        BlogUser userFromDb = userDao.findOneById(userFromKey.getId());
+        if (!userFromDb.getId().equals(userId)) {
+            return ResponseResult.FAILED("您无权修改");
         }
         //可以进行修改
         //可修改的项
@@ -441,33 +470,52 @@ public class UserServiceImpl implements IUserService {
         //用户名
         //头像
         if (!TextUtils.isEmmpty(blogUser.getAvatar())) {
-            blogUser.setAvatar(blogUser.getAvatar());
+            userFromDb.setAvatar(blogUser.getAvatar());
         }
-        blogUser.setSign(blogUser.getSign());
+        userFromDb.setSign(blogUser.getSign());
         String username = blogUser.getUsername();
-        if (!TextUtils.isEmmpty(username)){
+        if (!TextUtils.isEmmpty(username)) {
             BlogUser byUsername = userDao.findByUsername(username);
-            if(byUsername!=null){
+            if (byUsername != null) {
                 return ResponseResult.FAILED("该用户名已经被注册了");
             }
-            blogUser.setUsername(username);
+            userFromDb.setUsername(username);
         }
-        userDao.save(blogUser);
+        userDao.save(userFromDb);
+        //干掉redis里的token，下一次请求，需要解析token的，就会根据refreshToken重新创建一个
+        String cookie = CookieUtils.getCookie(request, Constants.User.COOKIE_TOKEN_KEY);
+        redisUtil.del(cookie);
         return ResponseResult.SUCCESS("修改成功");
     }
 
-    private BlogUser parseByTokenKey(String tokenKey) {
-        String token = (String) redisUtil.get(Constants.User.key_TOKEN_ + tokenKey);
-        if (token != null) {
-            try {
-                Claims claims = JwtUtil.parseJWT(token);
-                return ClaimsUtils.claimBlogUser(claims);
-            } catch (Exception e) {
-                return null;
-            }
-
+    @Override
+    public ResponseResult deleteUser(String userId, HttpServletRequest request, HttpServletResponse response) {
+        //满足条件进行修改
+        int result = userDao.deleteBlogUserByState(userId);
+        if (result > 0) {
+            return ResponseResult.SUCCESS("删除成功");
         }
-        return null;
+        return ResponseResult.FAILED("用户不存在");
     }
+
+    @Override
+    public ResponseResult listUsers(int page, int size, HttpServletRequest request, HttpServletResponse response) {
+        if (page < Constants.Page.DEFAULT_PAGE) {
+            page = 1;
+        }
+        //限制size，每一页不得小于5个
+        if (size < Constants.Page.MIN_SIZE) {
+            size = Constants.Page.MIN_SIZE;
+        }
+        //根据注册日期排序
+        Sort sort = new Sort(Sort.Direction.DESC, "createtime");
+        PageRequest pagelabel = PageRequest.of(page - 1, size, sort);
+        Page<BlogUser> all = userDao.listallUserNoPassword(pagelabel);
+
+        ResponseResult success = ResponseResult.SUCCESS("获取用户信息成功");
+        success.setData(all);
+        return success;
+    }
+
 
 }

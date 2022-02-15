@@ -31,13 +31,13 @@ public class ClaimsUtils {
         String username = (String) claims.get(USERNAME);
         blogUser.setUsername(username);
         String roles = (String) claims.get(ROLES);
-        blogUser.setUsername(roles);
+        blogUser.setRoles(roles);
         String avatar = (String) claims.get(AVATAR);
-        blogUser.setUsername(avatar);
+        blogUser.setAvatar(avatar);
         String email = (String) claims.get(EMAIL);
-        blogUser.setUsername(email);
+        blogUser.setEmail(email);
         String sign = (String) claims.get(SIGN);
-        blogUser.setUsername(sign);
+        blogUser.setSign(sign);
         return blogUser;
     }
 
